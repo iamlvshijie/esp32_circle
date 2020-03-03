@@ -1,27 +1,34 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/event_groups.h"
+
 #include "esp_log.h"
 #include "lwip/err.h"
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
-#include "baidu_rest.h"
+
+#include "http_parser.h"
+#include "url_parser.h"
+#include "mbedtls/base64.h"
 #include "http.h"
+
 #include "driver/gpio.h"
 #include "cJSON.h"
 #include "hal_i2s.h"
 #include "wm8978.h"
-#include "http_parser.h"
-#include "url_parser.h"
-#include "mbedtls/base64.h"
+
 #include "spiram_fifo.h"
 #include "record_task.h"
+
+//#include "baidu_access_token.h"
+#include "baidu_rest.h"
 
 #define TAG "REST:"
 
@@ -29,6 +36,7 @@ char rsa_result[256];
 
 uint32_t http_body_length=0;
 char* http_body=NULL;
+
 static int body_callback(http_parser* a, const char *at, size_t length){
     http_body=realloc(http_body,http_body_length+length);
     memcpy(http_body+http_body_length,at,length);
@@ -50,6 +58,7 @@ static int body_callback(http_parser* a, const char *at, size_t length){
     //ESP_LOGI(TAG,"received body:%s",http_body);
     return 0;
 }
+
 static int body_done_callback (http_parser* a){
     http_body=realloc(http_body,http_body_length+1);
     http_body[http_body_length]='\0';
@@ -89,8 +98,15 @@ static http_parser_settings settings_null =
     ,.on_chunk_header = 0
     ,.on_chunk_complete = 0
 };
+
 #define MAX_LENGTH 8*1000*16*10  //base64 8k 16bits 40s 
 const char* stream_head="{\"format\":\"wav\",\"cuid\":\"esp32_whyengineer\",\"token\":\"24.44810154581d4b7e8cc3554c90b949f0.2592000.1505980562.282335-10037482\",\"rate\":8000,\"channel\":1,\"speech\":\"";//","len":0,}"
+
+//static void baidu_rest_auth()
+// {
+//     baidu_get_access_token(BDS_AK, BDS_SK);
+// }
+
 static int baid_http_post(http_parser_settings *callbacks, void *user_data)
 {
     url_t *url = url_parse("http://vop.baidu.com/server_api");
