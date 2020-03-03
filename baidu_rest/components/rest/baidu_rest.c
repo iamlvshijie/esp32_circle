@@ -27,7 +27,7 @@
 #include "spiram_fifo.h"
 #include "record_task.h"
 
-//#include "baidu_access_token.h"
+#include "baidu_access_token.h"
 #include "baidu_rest.h"
 
 #define TAG "REST:"
@@ -102,10 +102,10 @@ static http_parser_settings settings_null =
 #define MAX_LENGTH 8*1000*16*10  //base64 8k 16bits 40s 
 const char* stream_head="{\"format\":\"wav\",\"cuid\":\"esp32_whyengineer\",\"token\":\"24.44810154581d4b7e8cc3554c90b949f0.2592000.1505980562.282335-10037482\",\"rate\":8000,\"channel\":1,\"speech\":\"";//","len":0,}"
 
-//static void baidu_rest_auth()
-// {
-//     baidu_get_access_token(BDS_AK, BDS_SK);
-// }
+void baidu_rest_auth()
+{
+    printf("bds token :%s \r\n",baidu_get_access_token(BDS_AK, BDS_SK));
+}
 
 static int baid_http_post(http_parser_settings *callbacks, void *user_data)
 {

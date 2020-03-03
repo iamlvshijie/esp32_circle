@@ -27,14 +27,15 @@
 #include "esp_http_client.h"
 #include "json_utils.h"
 #include "esp_log.h"
-#include "audio_error.h"
+
+//#include "audio_error.h"
 
 #define BAIDU_URI_LENGTH (200)
 #define BAIDU_AUTH_ENDPOINT "https://openapi.baidu.com/oauth/2.0/token?grant_type=client_credentials"
 
 static const char *TAG = "BAIDU_AUTH";
 
-char *baidu_get_access_token(const char *access_key, const char *access_secret)
+char* baidu_get_access_token(const char *access_key, const char *access_secret)
 {
     char *token = NULL;
     char *url = calloc(1, BAIDU_URI_LENGTH);

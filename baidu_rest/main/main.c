@@ -30,6 +30,7 @@
 #include "hal_i2s.h"
 #include "wm8978.h"
 #include "record_task.h"
+#include "baidu_rest.h"
 #include "webserver.h"
 #include "http.h"
 #include "cJSON.h"
@@ -69,7 +70,7 @@ void app_main()
     }
     record_event_group=xEventGroupCreate();
     xTaskCreate(record_task, "record_task", 4096, NULL, 5, NULL);
-    xTaskCreate(webserver_task, "web_server_task", 8196, NULL, 4, NULL);
+    //xTaskCreate(webserver_task, "web_server_task", 8196, NULL, 4, NULL);
         //xEventGroupWaitBits(eth_event_group,ETH_DISCONNECTED_BIT,pdTRUE,pdTRUE,portMAX_DELAY);
     //}while(1);
     //if(create_tcp_server(8080)!=ESP_OK){
@@ -84,6 +85,9 @@ void app_main()
     //memset(samples_data,0,1024);
     //http_client_get("http://vop.baidu.com/server_api",&settings_null,NULL);
     uint8_t cnt=0;
+    
+    baidu_rest_auth();
+
     while(1){
         //gpio_set_level(GPIO_OUTPUT_IO_0, cnt%2);
         //memset(samples_data,0,1024);
