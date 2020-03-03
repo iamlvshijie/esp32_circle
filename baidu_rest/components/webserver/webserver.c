@@ -156,35 +156,35 @@ void web_index(http_parser* a,char*url,char* body){
 }
 extern char rsa_result[256];
 void record_ctrl(http_parser* a,char*url,char* body){
-  char *request;
-  asprintf(&request,RES_HEAD,"application/json");//json
-  write(client_fd, request, strlen(request));
-  free(request);
-  cJSON *root=NULL;
-  root= cJSON_Parse(http_body);
-  uint8_t record=cJSON_GetObjectItem(root,"record")->valueint;
-  cJSON_Delete(root);
-  root=NULL;
-  root=cJSON_CreateObject();
-  if(root==NULL){
-    ESP_LOGI(TAG,"cjson root create failed\n");
-    return NULL;
-  }
-  cJSON_AddNumberToObject(root,"err",0);
-  if(record)
-    xEventGroupSetBits(record_event_group, RECORD_START);
-  else{
-    xEventGroupSetBits(record_event_group, RECORD_STOP);
-    xEventGroupWaitBits(record_event_group,RECORD_DONE,pdTRUE,pdTRUE,portMAX_DELAY);
-    cJSON_AddStringToObject(root,"content",rsa_result);
-  }
-  char* out = cJSON_PrintUnformatted(root);
-  sprintf(chunk_len,"%x\r\n",strlen(out));
-  write(client_fd, chunk_len, strlen(chunk_len));
-  write(client_fd, out, strlen(out));
-  write(client_fd,"\r\n",2);
-  chunk_end(client_fd);
-  cJSON_Delete(root);
+	char *request;
+	asprintf(&request,RES_HEAD,"application/json");//json
+	write(client_fd, request, strlen(request));
+	free(request);
+	cJSON *root=NULL;
+	root= cJSON_Parse(http_body);
+	uint8_t record=cJSON_GetObjectItem(root,"record")->valueint;
+	cJSON_Delete(root);
+	root=NULL;
+	root=cJSON_CreateObject();
+	if(root==NULL){
+		ESP_LOGI(TAG,"cjson root create failed\n");
+		return NULL;
+	}
+	cJSON_AddNumberToObject(root,"err",0);
+	if(record)
+		xEventGroupSetBits(record_event_group, RECORD_START);
+	else{
+		xEventGroupSetBits(record_event_group, RECORD_STOP);
+		xEventGroupWaitBits(record_event_group,RECORD_DONE,pdTRUE,pdTRUE,portMAX_DELAY);
+		cJSON_AddStringToObject(root,"content",rsa_result);
+	}
+	char* out = cJSON_PrintUnformatted(root);
+	sprintf(chunk_len,"%x\r\n",strlen(out));
+	write(client_fd, chunk_len, strlen(chunk_len));
+	write(client_fd, out, strlen(out));
+	write(client_fd,"\r\n",2);
+	chunk_end(client_fd);
+	cJSON_Delete(root);
 }
 void led_ctrl(http_parser* a,char*url,char* body){
 	char *request;
@@ -207,8 +207,8 @@ void led_ctrl(http_parser* a,char*url,char* body){
 	sprintf(chunk_len,"%x\r\n",strlen(out));
 	write(client_fd, chunk_len, strlen(chunk_len));
 	write(client_fd, out, strlen(out));
-  write(client_fd,"\r\n",2);
-  chunk_end(client_fd);
+	write(client_fd,"\r\n",2);
+	chunk_end(client_fd);
 	cJSON_Delete(root);
 }
 
