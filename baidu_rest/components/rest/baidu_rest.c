@@ -37,6 +37,7 @@ char rsa_result[256];
 uint32_t http_body_length=0;
 char* http_body=NULL;
 
+
 static int body_callback(http_parser* a, const char *at, size_t length){
     http_body=realloc(http_body,http_body_length+length);
     memcpy(http_body+http_body_length,at,length);
@@ -100,6 +101,7 @@ static http_parser_settings settings_null =
 };
 
 #define MAX_LENGTH 8*1000*16*10  //base64 8k 16bits 40s 
+
 const char* stream_head="{\"format\":\"wav\",\"cuid\":\"esp32_whyengineer\",\"token\":\"24.44810154581d4b7e8cc3554c90b949f0.2592000.1505980562.282335-10037482\",\"rate\":8000,\"channel\":1,\"speech\":\"";//","len":0,}"
 
 void baidu_rest_auth()
@@ -195,8 +197,8 @@ static int baid_http_post(http_parser_settings *callbacks, void *user_data)
     }
     EventBits_t uxBits;
     while(1){
-      uxBits=xEventGroupWaitBits(record_event_group,RECORD_STOP,pdTRUE,pdTRUE,0);
-      if((uxBits & RECORD_STOP)!=0){
+        uxBits=xEventGroupWaitBits(record_event_group,RECORD_STOP,pdTRUE,pdTRUE,0);
+        if((uxBits & RECORD_STOP)!=0){
             //find the record stop event
             break;
       }
@@ -206,10 +208,10 @@ static int baid_http_post(http_parser_settings *callbacks, void *user_data)
     		ESP_LOGE(TAG,"base64 encode failed!");
     		ESP_LOGE(TAG,"olen:%d",olen);
     	}
-      sprintf(chunk_len,"%x\r\n",olen);
-      write(sock, chunk_len, strlen(chunk_len));
-    	write(sock, dst_buf, olen);
-      write(sock, "\r\n",2);
+        sprintf(chunk_len,"%x\r\n",olen);
+        write(sock, chunk_len, strlen(chunk_len));
+        write(sock, dst_buf, olen);
+        write(sock, "\r\n",2);
       //printf("%s",dst_buf);
     }
     ESP_LOGI(TAG, "#loop success");
